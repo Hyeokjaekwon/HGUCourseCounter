@@ -22,7 +22,6 @@ public class HGUCoursePatternAnalyzer {
 	public void run(String[] args) {
 		
 		try {
-			
 			if(args.length < 2)
 				throw new NotEnoughArgumentException();
 			
