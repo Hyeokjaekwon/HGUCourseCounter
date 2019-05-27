@@ -1,12 +1,10 @@
-    package edu.handong.analysis;
+package edu.handong.analysis;
 
 import java.util.ArrayList;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.io.File;
-
 import edu.handong.analysis.datamodel.Course;
 import edu.handong.analysis.datamodel.Student;
 import edu.handong.analysis.utils.NotEnoughArgumentException;
@@ -24,36 +22,31 @@ public class HGUCoursePatternAnalyzer {
 	public void run(String[] args) {
 		
 		try {
-			// when there are not enough arguments from CLI, it throws the NotEnoughArgmentException which must be defined by you.
-			if(args.length<2)
+			
+			if(args.length < 2)
 				throw new NotEnoughArgumentException();
 			
-			// check file exist. 
 			File f1 = new File(args[0]);
 			if(!f1.exists() || f1.isDirectory())
 				throw new Exception("The file path does not exist. Please check your CLI argument!");
 		} catch (NotEnoughArgumentException e) {
 			System.out.println(e.getMessage());
 			System.exit(0);
-		} catch (Exception e)
-		{
+		} catch (Exception e){
 			System.out.println(e.getMessage());
 			System.exit(0);
 		}
 		
-		String dataPath = args[0]; // csv file to be analyzed
-		String resultPath = args[1]; // the file path where the results are saved.
+		String dataPath = args[0]; 
+		String resultPath = args[1]; 
 		ArrayList<String> lines = Utils.getLines(dataPath, true);
 		
 		students = loadStudentCourseRecords(lines);
 		
-		// To sort HashMap entries by key values so that we can save the results by student ids in ascending order.
 		Map<String, Student> sortedStudents = new TreeMap<String,Student>(students); 
 		
-		// Generate result lines to be saved.
 		ArrayList<String> linesToBeSaved = countNumberOfCoursesTakenInEachSemester(sortedStudents);
 		
-		// Write a file (named like the value of resultPath) with linesTobeSaved.
 		Utils.writeAFile(linesToBeSaved, resultPath);
 	}
 	
@@ -67,25 +60,22 @@ public class HGUCoursePatternAnalyzer {
 		
 		HashMap<String,Student> newStudents = new HashMap<String,Student>();
 		
-		for (String item : lines)
-		{
-			String studentId = item.split(",")[0].trim();	// get student id.
+		for (String item : lines){
+			
+			String studentId = item.split(",")[0].trim();	
 			Student tempStudent;
 			
-			if (newStudents.containsKey(studentId))			// if contain studentid, get this id's student.
-			{
+			if (newStudents.containsKey(studentId)){
 				tempStudent = newStudents.get(studentId);
 			}
-			else
-			{
-				tempStudent = new Student(studentId);		// if not exist, create student and put in hashmap.
+			else{
+				tempStudent = new Student(studentId);		
 				newStudents.put(studentId, tempStudent);
 			}
 			
 			tempStudent.addCourse(new Course(item));
 		}
-		
-		return newStudents; // do not forget to return a proper variable.
+		return newStudents;
 	}
 
 	/**
@@ -104,14 +94,14 @@ public class HGUCoursePatternAnalyzer {
 	private ArrayList<String> countNumberOfCoursesTakenInEachSemester(Map<String, Student> sortedStudents) {
 		ArrayList<String> resultStrings = new ArrayList<String>();
 		
-		for (Student student : sortedStudents.values())
-		{
+		for (Student student : sortedStudents.values()){
+			
 			Map<String, Integer> sortedSemesters = new TreeMap<String,Integer>(student.getSemestersByYearAndSemester()); 
 			
 			String totalSemester = Integer.toString(sortedSemesters.values().size());
 			
-			for (Integer nSemester : sortedSemesters.values())
-			{
+			for (Integer nSemester : sortedSemesters.values()){
+				
 				String tempString = new String();
 				tempString += student.getStudentId();
 				tempString += ",";
@@ -124,7 +114,6 @@ public class HGUCoursePatternAnalyzer {
 				resultStrings.add(tempString);
 			}
 		}
-		
 		return resultStrings; 
 	}
 }
